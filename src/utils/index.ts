@@ -1,8 +1,5 @@
 import Vue from 'vue';
 
-export { createNamespace } from './create';
-export { addUnit } from './format/unit';
-
 export const isServer: boolean = Vue.prototype.$isServer;
 
 export function noop() {}

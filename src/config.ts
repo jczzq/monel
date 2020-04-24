@@ -6,5 +6,6 @@ export default {
         pageName: 'currentPage',
         sizeName: 'pageSize',
     },
-    parameterFormat: undefined
+    parameterFormat: undefined,
+    warnHandler: undefined
 };
