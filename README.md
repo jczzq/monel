@@ -43,7 +43,7 @@ import base from 'monel';
 requirejs环境
 
 ```js
-requirejs(['node_modules/monel/dist/index.aio.js'], function (base) {
+requirejs(['node_modules/monel/dist/index.umd.js'], function (base) {
     // xxx
 })
 ```
@@ -51,7 +51,7 @@ requirejs(['node_modules/monel/dist/index.aio.js'], function (base) {
 浏览器环境
 
 ```html
-<script src="node_modules/monel/dist/index.aio.js"></script>
+<script src="node_modules/monel/dist/index.umd.js"></script>
 ```
 
 ## API 文档
