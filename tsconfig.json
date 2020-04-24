@@ -3,8 +3,7 @@
         "target": "ES5",
         "module": "commonjs",
         "declarationDir": "types",
-        "lib": [],
-        "skipLibCheck": true
+        "suppressImplicitAnyIndexErrors": true
     },
     "include": ["src/**/*.ts"]
 }

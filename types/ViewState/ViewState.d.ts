@@ -1,7 +1,4 @@
-interface ParameterSort {
-    prop?: string;
-    order?: 'asc' | 'desc' | null;
-}
+import { IParameterSort } from "./interface/IMoneParameter";
 /**
  * 搜索条件对象
  * 使用示例：
@@ -43,10 +40,10 @@ interface ParameterSort {
  * @class MoneParameter
  */
 export declare class MoneParameter {
-    sort?: ParameterSort | ParameterSort[];
-    page?: {};
-    query: any;
-    format?: () => any;
+    sort?: IParameterSort | IParameterSort[];
+    page?: object;
+    query: object;
+    format?: Function;
     constructor({ query, sort, page, format }?: MoneParameter);
 }
 declare enum MoneQueryDataOptionEnum {
@@ -62,50 +59,50 @@ declare enum MoneQueryDataFormatEnum {
     LAST = "$last",
     TOSTRING = "$toString"
 }
+declare type MoneQueryDataValue = object | string | number | null | [];
 /**
  * query参数
  * @export
  * @class MoneQueryData
- */ export declare class MoneQueryData {
-    value: any;
+ */ export declare class MoneQueryData<T> {
+    value: MoneQueryDataValue;
     option?: MoneQueryDataOptionEnum;
-    format?: MoneQueryDataFormatEnum | ((any: any) => any);
-    constructor({ value, option, format }?: MoneQueryData);
+    format?: MoneQueryDataFormatEnum | Function;
+    constructor({ value, option, format }: MoneQueryData<T>);
 }
 /**
  * 视图模型
  */
 export declare class CommonView {
-    loading: boolean;
+    pending: boolean;
     visible: boolean;
-    constructor(data?: any);
+    constructor(data?: CommonView);
 }
 export declare class ListView extends CommonView {
     parameters: MoneParameter;
     _parameters?: MoneParameter;
-    rows?: any[];
+    rows?: Array<object>;
     total?: number;
     rowsName?: string;
     totalName?: string;
     constructor(data?: ListView);
     initParameters(data?: MoneParameter): void;
-    sizeChange(size: any): void;
-    load(...args: any): Promise<any>;
+    sizeChange(size: number): void;
+    load(req: Function, ...args: []): Promise<any>;
 }
 export declare class DetailView extends CommonView {
-    instance: any;
+    instance: object;
     deleting: boolean;
     instanceName: string;
-    constructor(data?: any);
+    constructor(data?: DetailView);
     clone(): object;
-    delete(...args: any): Promise<any>;
-    load(...args: any): Promise<any>;
+    delete(req: Function, ...args: []): Promise<any>;
+    load(req: Function, ...args: []): Promise<any>;
 }
 export declare class FormView extends DetailView {
-    rules: any;
+    rules: object;
     editing: boolean;
-    submitting: boolean;
-    constructor(data?: any);
-    submit(...args: any): Promise<{}>;
+    constructor(data?: FormView);
+    submit(req: Function, ...args: []): Promise<any>;
 }
 export {};

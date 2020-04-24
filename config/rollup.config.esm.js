@@ -12,6 +12,17 @@ module.exports = {
         banner: common.banner,
     },
     plugins: [
-        common.getCompiler()
-    ]
+        common.getCompiler({
+            tsconfigOverride: {
+                compilerOptions: {
+                    declaration: true,
+                    declarationDir: './types',
+                    module: 'ES6',
+                    // strict: true,
+                    target: 'ESNext',
+                },
+            },
+            useTsconfigDeclarationDir: true,
+        }),
+    ],
 };

@@ -13,8 +13,12 @@ module.exports = {
     },
     plugins: [
         common.getCompiler({
-            tsconfigOverride: { compilerOptions : { declaration: true, module: 'ES2015' } },
-            useTsconfigDeclarationDir: true
-        })
-    ]
+            tsconfigOverride: {
+                compilerOptions: {
+                    module: 'commonjs',
+                    target: 'ES6',
+                }
+            },
+        }),
+    ],
 };

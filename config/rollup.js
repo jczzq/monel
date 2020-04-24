@@ -14,7 +14,7 @@ var banner = `/*!
 
 function getCompiler(opt) {
     opt = opt || {
-        tsconfigOverride: { compilerOptions: { module: 'ES2015' } },
+        tsconfigOverride: { compilerOptions: { module: 'ES6' } },
     };
 
     return typescript(opt);

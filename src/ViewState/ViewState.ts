@@ -5,10 +5,7 @@ import { deepAssign } from '../utils/deep-assign';
 
 import config from '../config';
 
-interface ParameterSort {
-    prop?: string;
-    order?: 'asc' | 'desc' | null;
-}
+import { IParameterSort } from "./interface/IMoneParameter"
 /**
  * 搜索条件对象
  * 使用示例：
@@ -50,10 +47,10 @@ interface ParameterSort {
  * @class MoneParameter
  */
 export class MoneParameter {
-    sort?: ParameterSort | ParameterSort[];
-    page?: {};
-    query: any;
-    format?: () => any;
+    sort?: IParameterSort | IParameterSort[];
+    page?: object;
+    query: object;
+    format?: Function;
     constructor({ query, sort, page, format }: MoneParameter = { query: {} }) {
         this.sort = sort || {};
         this.page = page || {
@@ -92,25 +89,27 @@ enum MoneQueryDataFormatEnum {
     TOSTRING = '$toString',
 }
 
+type MoneQueryDataValue = object | string | number | null | [];
 /**
  * query参数
  * @export
  * @class MoneQueryData
- */ export class MoneQueryData {
+ */ export class MoneQueryData<T> {
     // 业务参数对象，一般为需要特殊操作的引用类型
-    value: any;
+    value: MoneQueryDataValue;
     // 比较类型
     option?: MoneQueryDataOptionEnum;
-    format?: MoneQueryDataFormatEnum | ((any) => any);
-    constructor({ value, option, format }: MoneQueryData = { value: null }) {
-        this.value = value;
+    format?: MoneQueryDataFormatEnum | Function;
+    constructor({ value, option, format }: MoneQueryData<T>) {
+        this.value = value || null;
         this.option = option || MoneQueryDataOptionEnum.EQ;
 
         const t = typeof format;
         if (t === 'string') {
             switch (format) {
                 case MoneQueryDataFormatEnum.FIRST:
-                    this.format = (array) => {
+                    this.format = () => {
+                        const array = this.value as Array<T>;
                         if (array && array.length) {
                             return array[0];
                         }
@@ -118,22 +117,24 @@ enum MoneQueryDataFormatEnum {
                     };
                     break;
                 case MoneQueryDataFormatEnum.LAST:
-                    this.format = (array) => {
+                    this.format = () => {
+                        const array = this.value as Array<T>;
                         if (array && array.length) {
-                            return array[this.value.length - 1];
+                            return array[(this.value as []).length - 1];
                         }
                         return array;
                     };
                     break;
                 case MoneQueryDataFormatEnum.TOSTRING:
-                    this.format = (a) => a.toString();
+                    this.format = () =>
+                        this.value != null ? this.value.toString() : '';
                     break;
                 default:
-                    this.format = (a) => a;
+                    this.format = () => this.value;
                     break;
             }
         } else if (t === 'function') {
-            this.format = (format as any).bind(this);
+            this.format = (format as Function).bind(this);
         } else {
             warn('`format` must be a string or function, got a ' + t);
         }
@@ -143,10 +144,10 @@ enum MoneQueryDataFormatEnum {
  * 视图模型
  */
 export class CommonView {
-    loading: boolean;
+    pending: boolean;
     visible: boolean;
-    constructor(data?) {
-        this.loading = false;
+    constructor(data?: CommonView) {
+        this.pending = false;
         this.visible = false;
         if (data) {
             deepAssign(this, data);
@@ -158,7 +159,7 @@ export class CommonView {
 export class ListView extends CommonView {
     parameters: MoneParameter;
     _parameters?: MoneParameter;
-    rows?: any[];
+    rows?: Array<object>;
     total?: number;
     rowsName?: string;
     totalName?: string;
@@ -168,47 +169,44 @@ export class ListView extends CommonView {
         this.total = 0;
         this.rowsName = config.rowsName;
         this.totalName = config.totalName;
+        this.parameters = new MoneParameter();
         if (data) {
             deepAssign(this, data);
             this.initParameters(data.parameters);
-        } else {
-            this.initParameters();
         }
     }
     initParameters(data?: MoneParameter): void {
         if (data) {
             this._parameters = data;
         }
-        this.parameters = new MoneParameter();
         if (this._parameters) {
             this.parameters = deepClone(this._parameters) as MoneParameter;
         }
     }
-    sizeChange(size): void {
-        this.parameters.query.size = size;
+    sizeChange(size: number): void {
+        this.parameters.query[config.page.sizeName] = size;
     }
-    async load(...args: any) {
+    async load(req: Function, ...args: []) {
         try {
-            const req = args.shift();
-            this.loading = true;
+            this.pending = true;
             const res = await req.apply(req, args);
-            this.rows = get(res, this.rowsName);
-            this.total = get(res, this.totalName);
+            this.rows = get(res, this.rowsName || config.rowsName);
+            this.total = get(res, this.totalName || config.totalName);
             return res;
         } catch (error) {
             return Promise.reject(error);
         } finally {
-            this.loading = false;
+            this.pending = false;
         }
     }
 }
 
 // 详情视图
 export class DetailView extends CommonView {
-    instance: any;
+    instance: object;
     deleting: boolean;
     instanceName: string;
-    constructor(data?) {
+    constructor(data?: DetailView) {
         super();
         this.instance = {};
         this.deleting = false;
@@ -220,9 +218,8 @@ export class DetailView extends CommonView {
     clone() {
         return deepClone(this.instance);
     }
-    async delete(...args: any) {
+    async delete(req: Function, ...args: []) {
         try {
-            const req = args.shift();
             this.deleting = true;
             const res = await req.apply(req, args);
             return res;
@@ -233,10 +230,9 @@ export class DetailView extends CommonView {
             this.deleting = false;
         }
     }
-    async load(...args: any) {
+    async load(req: Function, ...args: []) {
         try {
-            const req = args.shift();
-            this.loading = true;
+            this.pending = true;
             const res = await req.apply(req, args);
             this.instance = res[this.instanceName];
             return res;
@@ -244,39 +240,33 @@ export class DetailView extends CommonView {
             // console.info('DetailView load data error', error);
             return Promise.reject(error);
         } finally {
-            this.loading = false;
+            this.pending = false;
         }
     }
 }
 
 // 表单视图
 export class FormView extends DetailView {
-    rules: any;
+    rules: object;
     // 是否为编辑状态
     editing: boolean;
-    submitting: boolean;
-    constructor(data?) {
+    constructor(data?: FormView) {
         super();
         this.rules = {};
         this.editing = false;
-        this.submitting = false;
         if (data) {
             deepAssign(this, data);
         }
     }
-    submit(...args: any) {
-        const req = args.shift();
-        return new Promise((resolve, reject) => {
-            this.submitting = true;
-            req.apply(req, args)
-                .then((res) => {
-                    this.submitting = false;
-                    resolve(res);
-                })
-                .catch((err) => {
-                    this.submitting = false;
-                    reject(err);
-                });
-        });
+    async submit(req: Function, ...args: []) {
+        try {
+            this.pending = true;
+            const res = await req.apply(req, args);
+            return res;
+        } catch (error) {
+            return Promise.reject(error);
+        } finally {
+            this.pending = false;
+        }
     }
 }
