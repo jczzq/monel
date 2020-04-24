@@ -1,7 +1,3 @@
-import Vue from 'vue';
-
-export const isServer: boolean = Vue.prototype.$isServer;
-
 export function noop() {}
 
 export function isDef(value: any): boolean {

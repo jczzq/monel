@@ -1,10 +1,9 @@
 {
     "compilerOptions": {
-        "target": "es5",
+        "target": "ES5",
         "module": "commonjs",
         "declarationDir": "types",
-        "declaration": true,
-        "lib": ["ESNext"],
+        "lib": [],
         "skipLibCheck": true
     },
     "include": ["src/**/*.ts"]

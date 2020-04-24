@@ -30,6 +30,7 @@
   },
   "files": [
     "/dist",
+    "/types",
     "*.d.ts"
   ],
   "engines": {
@@ -61,7 +62,6 @@
     "typescript": "3.3.3333"
   },
   "dependencies": {
-    "@types/node": "^13.13.2",
-    "vue": "^2.6.11"
+    "@types/node": "^13.13.2"
   }
 }
