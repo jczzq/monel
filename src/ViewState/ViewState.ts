@@ -3,7 +3,7 @@ import { warn } from '../utils/warn';
 import { deepClone } from '../utils/deep-clone';
 import { deepAssign } from '../utils/deep-assign';
 
-import config from '../config';
+import config from './config';
 
 import { IParameterSort } from "./interface/IMoneParameter"
 /**
