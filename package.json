@@ -29,7 +29,7 @@
     "url": "https://github.com/jczzq/monel/issues"
   },
   "files": [
-    "/dist",
+    "/src",
     "/types",
     "*.d.ts"
   ],
