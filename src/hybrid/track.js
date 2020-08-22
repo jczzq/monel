@@ -1,4 +1,4 @@
-import actionNative from './dispatch';
+import actionNative from './invoke';
 
 /**
  * 埋点

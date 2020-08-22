@@ -2,9 +2,9 @@
   "name": "monel",
   "version": "0.1.0",
   "description": "A javascript library for developing web applications",
-  "main": "dist/index.js",
+  "main": "src/index.js",
   "jsnext:main": "dist/index.esm.js",
-  "module": "dist/index.esm.js",
+  "module": "src/index.js",
   "sideEffects": false,
   "scripts": {
     "clean": "rimraf ./dist",

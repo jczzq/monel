@@ -1,5 +1,9 @@
-import actionNative from './dispatch';
+import actionNative from './invoke';
 import deviceInfo from './device';
+
+export * from './track';
+export * from './vuex-plugin';
+export { actionNative, deviceInfo };
 
 /***
  * 设置状态栏主题
@@ -40,13 +44,12 @@ export const GET_INTENT_DATA = (source) => {
 
 /***
  * 获取定位信息
- * @param {object} isNeedToLogin 是否需要登录
  */
-export const GET_CURRENT_LOCATE = async (isNeedToLogin = false) => {
+export const GET_CURRENT_LOCATE = async () => {
   try {
     let locate = {};
     if (deviceInfo.tuhuAndroid) {
-      locate = await actionNative('getUserInfo', { isNeedToLogin });
+      locate = await actionNative('getUserInfo');
     } else if (deviceInfo.tuhuIos) {
       locate = await actionNative('getDeviceInfo', {});
     }
@@ -90,11 +93,15 @@ export const GET_DEFAULT_CAR = async ({
 
 /***
  * 获取用户信息
- * @param {bool} isNeedToLogin 是否需要去登录
+ * @param {bool} isNeedToLogin(android) 是否需要去登录
+ * @param {bool} force(iOS) 是否需要去登录
  */
-export const GET_CURRENT_USER = async (isNeedToLogin = false) => {
+export const GET_CURRENT_USER = async (isNeedToLogin) => {
   try {
-    const user = await actionNative('getUserInfo', { isNeedToLogin });
+    const user = await actionNative('getUserInfo', {
+      isNeedToLogin,
+      force: isNeedToLogin,
+    });
     return {
       name: user.username || user.name,
       phone: user.phone,
