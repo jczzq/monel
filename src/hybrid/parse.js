@@ -8,7 +8,7 @@ export default (res) => {
       res = JSON.parse(res || '{}');
     } catch (error) {
       console.error('parseResult error:', error);
-      console.log(JSON.stringify(res));
+      console.error('parseResult res:', res);
       return {};
     }
     return res;

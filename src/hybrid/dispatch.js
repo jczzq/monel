@@ -16,7 +16,8 @@ export default (name, param = {}, cb) => {
     const callback = (res) => {
       window.showNativeLog && console.info('=actionNative after=', name, res);
       res = parseResult(res) || {};
-      const result = parseResult(res.result) || res;
+      // @ALIGN: iOS 将401放在包装对象上，Android放在包装对象里面
+      const result = res.status === 401 ? res : parseResult(res.result) || res;
       cb && cb(result);
       if (result) {
         return resolve(result);
