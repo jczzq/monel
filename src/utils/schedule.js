@@ -18,7 +18,7 @@ export default (fn) => {
   let resolves = [];
   let rejects = [];
 
-  return async () => {
+  return async (...params) => {
     // 重复请求 返回一个待定的Promise，并将resolve回调push进缓冲栈
     if (loading) {
       return new Promise((resolve, reject) => {
@@ -28,15 +28,14 @@ export default (fn) => {
     }
     // 已有数据直接返回，除非强制请求
     /* eslint-disable no-undef */
-    const params = Array.from(arguments);
-    const { reset } = params.pop() || {};
+    const { reset } = params[params.length - 1] || {};
     if (loaded && !reset) {
       return Promise.resolve(data);
     }
     try {
       loaded = false;
       loading = true;
-      const res = await fn.apply(params);
+      const res = await fn.apply(null, params);
       loaded = true;
       data = res;
 
