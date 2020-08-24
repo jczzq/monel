@@ -1,5 +1,6 @@
 import actionNative from './invoke';
 import deviceInfo from './device';
+import schedule from '../utils/schedule';
 
 export * from './track';
 export * from './vuex-plugin';
@@ -96,7 +97,7 @@ export const GET_DEFAULT_CAR = async ({
  * @param {bool} isNeedToLogin(android) 是否需要去登录
  * @param {bool} force(iOS) 是否需要去登录
  */
-export const GET_CURRENT_USER = async (isNeedToLogin) => {
+export const GET_CURRENT_USER = schedule(async (isNeedToLogin) => {
   try {
     const user = await actionNative('getUserInfo', {
       isNeedToLogin,
@@ -111,7 +112,7 @@ export const GET_CURRENT_USER = async (isNeedToLogin) => {
   } catch (error) {
     return Promise.reject(error);
   }
-};
+});
 
 /***
  * 请求接口

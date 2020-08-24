@@ -1,11 +1,7 @@
 /**
- * 节流函数
- * 特性：
- *  节流策略
- *  1. 在指定时间内节流
- *  2. 在promise pending内节流
- *  3. 在缓存更新前节流
- * const f = throttle(() => {})
+ * 防抖调度器
+ * 特性： 在promise pending内防抖
+ * const f = schedule(() => {})
  * f({
  *    reset: 执行并更新数据
  * })
