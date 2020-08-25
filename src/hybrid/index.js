@@ -103,11 +103,15 @@ export const GET_CURRENT_USER = schedule(async (isNeedToLogin) => {
       isNeedToLogin,
       force: isNeedToLogin,
     });
-    user.name = user.name || user.RealName;
-    user.userid = user.userid || user.userID;
-    delete user.RealName;
-    delete user.userID;
-    return user;
+    if (user && user.usersession) {
+      user.name = user.name || user.RealName;
+      user.userid = user.userid || user.userID;
+      delete user.RealName;
+      delete user.userID;
+      return user;
+    } else {
+      return Promise.reject(null);
+    }
   } catch (error) {
     return Promise.reject(error);
   }
