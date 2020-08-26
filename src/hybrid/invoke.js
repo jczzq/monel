@@ -12,9 +12,9 @@ let iosNativeExecNo = Date.now();
 export default (name, param = {}, cb) => {
   return new Promise((resolve, reject) => {
     if (!name) return reject(new Error('action name is required'));
-    window.showNativeLog && console.info('=actionNative before=', name, param);
+    window.showNativeLog && console.info('=原生请求=', name, param);
     const callback = (res) => {
-      window.showNativeLog && console.info('=actionNative after=', name, res);
+      window.showNativeLog && console.info('=原生响应=', name, res);
       res = parseResult(res) || {};
       // @ALIGN: iOS 将401放在包装对象上，Android放在包装对象里面
       const result = res.status === 401 ? res : parseResult(res.result) || res;
@@ -30,7 +30,6 @@ export default (name, param = {}, cb) => {
       fn && fn(param, callback);
     } else if (deviceInfo.tuhuIos) {
       const fn = window.webkit.messageHandlers[name];
-      console.log(name, fn);
       if (fn) {
         let tmpParam = { ...param };
         tmpParam.callback = 'iosNativeCallback' + iosNativeExecNo++;
