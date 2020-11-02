@@ -12,14 +12,22 @@ export { actionNative, deviceInfo };
  * bgColor: 状态栏背景色(仅安卓有效)
  */
 export const SET_STATUS_BAR = (bgWhiteColorBlack, bgColor) => {
-  if (deviceInfo.tuhuAndroid) {
-    return actionNative('setStatusBarColor', {
+  let p = {};
+  if (typeof bgColor === 'object') {
+    p = bgColor;
+  } else if (typeof bgColor === 'string') {
+    p = {
       statusBarColor: bgColor,
       titleBarColor: bgColor,
       backIconColor: bgColor,
       titleColor: bgColor,
       shareButtonColor: bgColor,
-      statusIconStyle: bgWhiteColorBlack,
+    };
+  }
+  if (deviceInfo.tuhuAndroid) {
+    return actionNative('setStatusBarColor', {
+      white: bgWhiteColorBlack,
+      ...p,
     });
   } else if (deviceInfo.tuhuIos) {
     return actionNative('setStatusBarStyle', {
