@@ -17,11 +17,11 @@ export const SET_STATUS_BAR = (bgWhiteColorBlack, bgColor) => {
     p = bgColor;
   } else if (typeof bgColor === 'string') {
     p = {
-      statusBarColor: bgColor,
-      titleBarColor: bgColor,
-      backIconColor: bgColor,
-      titleColor: bgColor,
-      shareButtonColor: bgColor,
+      statusBarColor: bgColor, // 状态栏背景色
+      titleBarColor: bgColor, // 标题栏背景色
+      backIconColor: bgColor, // 返回按钮颜色
+      titleColor: bgColor, // 标题颜色
+      shareButtonColor: bgColor, // 分享按钮颜色
     };
   }
   if (deviceInfo.tuhuAndroid) {
